@@ -55,13 +55,13 @@ public class EditActivity extends AppCompatActivity {
             pos = arguments.getInt("position");
             if(arguments.containsKey("person")) {
                 person = (Person) arguments.getSerializable("person");
-                name.setText(person.name);
-                family.setText(person.family);
-                patronymic.setText(person.patronymic);
-                phone.setText(person.phone);
+                name.setText(person.getName());
+                family.setText(person.getFamily());
+                patronymic.setText(person.getPatronymic());
+                phone.setText(person.getPhone());
                 try {
-                    avatar.setImageBitmap(BitmapFactory.decodeStream(this.openFileInput(person.image)));
-                    path = person.image;
+                    avatar.setImageBitmap(BitmapFactory.decodeStream(this.openFileInput(person.getImage())));
+                    path = person.getImage();
                 } catch (Exception ignored) {
                 }
             }

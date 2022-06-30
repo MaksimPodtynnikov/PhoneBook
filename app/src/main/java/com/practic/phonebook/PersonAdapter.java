@@ -31,9 +31,9 @@ public class PersonAdapter extends ArrayAdapter<Person> {
 
         Person person = persons.get(position);
 
-        patronymicView.setText(person.patronymic);
-        nameView.setText(person.name);
-        familyView.setText(person.family);
+        patronymicView.setText(person.getPatronymic());
+        nameView.setText(person.getName());
+        familyView.setText(person.getFamily());
 
         return view;
     }
