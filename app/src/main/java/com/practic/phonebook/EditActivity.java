@@ -1,11 +1,16 @@
 package com.practic.phonebook;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -152,10 +157,33 @@ public class EditActivity extends AppCompatActivity {
         goHome();
     }
 
+    private final int REQUEST_CODE_PERMISSION_CALLS=100;
     public void onCallClick(View view)
     {
-        String toDial="tel:+7"+phone.getText().toString();
-        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(toDial)));
+        int permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+            String toDial="tel:+7"+phone.getText().toString();
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(toDial)));
+        } else {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.CALL_PHONE},
+                    REQUEST_CODE_PERMISSION_CALLS);
+        }
+
+    }
+    // вызывается после ответа пользователя на запрос разрешения
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case REQUEST_CODE_PERMISSION_CALLS:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    String toDial = "tel:+7" + phone.getText().toString();
+                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(toDial)));
+                }
+                return;
+        }
     }
 
 }
