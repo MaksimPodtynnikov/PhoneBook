@@ -1,17 +1,22 @@
 package com.practic.phonebook;
 
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+
 import java.io.Serializable;
 
 public class Person implements Serializable {
+    private int id;
     private String name;
     private String family;
     private String patronymic;
-    private String image;
+    private byte[] image;
     private String phone;
 
-    public Person(String name, String family, String patronymic, String phone, String image)
+    public Person(int id, String name, String family, String patronymic, String phone, byte[] image)
     {
+        this.id = id;
         this.name = name;
         this.family = family;
         this.patronymic = patronymic;
@@ -22,8 +27,18 @@ public class Person implements Serializable {
     {
         return name;
     }
+    public int getId()
+    {
+        return id;
+    }
 
-    public String getImage() {
+    public Bitmap getImage() {
+        if(image!=null)
+            return BitmapFactory.decodeByteArray(image, 0, image.length);
+        else return null;
+    }
+    public byte[] getImageBytes()
+    {
         return image;
     }
 
@@ -42,8 +57,11 @@ public class Person implements Serializable {
     public void setFamily(String family) {
         this.family = family;
     }
+    public void setId(int Id) {
+        this.id = Id;
+    }
 
-    public void setImage(String image) {
+    public void setImage(byte[] image) {
         this.image = image;
     }
 

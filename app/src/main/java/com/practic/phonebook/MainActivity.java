@@ -1,71 +1,92 @@
 package com.practic.phonebook;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    ArrayList<Person> persons = new ArrayList<>();
+    ArrayList<Person> persons;
     ListView contacts;
     PersonAdapter personsAdapter;
+    EditText search;
+    DatabaseAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(this, EditActivity.class);
-
-
         contacts = findViewById(R.id.contacts);
-        personsAdapter = new PersonAdapter(this, R.layout.list_item, persons);
-        contacts.setAdapter(personsAdapter);
+        search = findViewById(R.id.editTextSearch);
+        adapter = new DatabaseAdapter(this);
         AdapterView.OnItemClickListener itemListener = (parent, v, position, id) -> {
-            // получаем выбранный пункт
             Person selectedPerson = (Person) parent.getItemAtPosition(position);
-            intent.putExtra("person",selectedPerson);
-            intent.putExtra("position",position);
-            mStartForResult.launch(intent);
+            intent.putExtra("id",selectedPerson.getId());
+            startActivity(intent);
         };
         contacts.setOnItemClickListener(itemListener);
+        // установка слушателя изменения текста
+        persons = new ArrayList<>();
+        personsAdapter = new PersonAdapter(this, R.layout.list_item, persons);
+        contacts.setAdapter(personsAdapter);
+        search.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) { }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
+            // при изменении текста выполняем фильтрацию
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                adapter.open();
+                persons.clear();
+                if(s == null || s.length() == 0) persons.addAll(adapter.getPersons());
+                else persons.addAll(adapter.search(s.toString()));
+                adapter.close();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        adapter.open();
+        persons.clear();
+        persons.addAll(adapter.getPersons());
+        adapter.close();
         personsAdapter.notifyDataSetChanged();
     }
 
-    ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-            new ActivityResultCallback<ActivityResult>() {
-                @Override
-                public void onActivityResult(ActivityResult result) {
-                    if(result.getResultCode() == Activity.RESULT_OK){
-                        Intent intent = result.getData();
-                        Bundle arguments = intent.getExtras();
-                        if(arguments!= null)
-                        {
-                            Person person = (Person) arguments.getSerializable("person");
-                            if(arguments.getInt("position")<persons.size())
-                                persons.set(arguments.getInt("position"),person);
-                            else
-                                persons.add(person);
-                            personsAdapter.notifyDataSetChanged();
-                        }
-                    }
-                }
-            });
-
-
     public void onClick(View view) {
         Intent intent = new Intent(this, EditActivity.class);
-        intent.putExtra("position",persons.size());
-        mStartForResult.launch(intent);
+        startActivity(intent);
+    }
+
+    public void fullContactsClick(View view)
+    {
+        String[] names = {"Иван", "Сергей", "Дмитрий", "Аркадий"};
+        String[] families = {"Иванов", "Пеньков", "Синьков", "Глушков"};
+        String[] patronymics = {"Максимович","Павлович","Романович","Степанович"};
+        String[] phones = {"98657456787","95635479876","9806548798","94536547878"};
+        adapter.open();
+        for (int i=0;i<30;i++) {
+            int nameRand = (int)(Math.random()*(3+1));
+            int famRand = (int)(Math.random()*(3+1));
+            int patrRand = (int)(Math.random()*(3+1));
+            int phoneRand = (int)(Math.random()*(3+1));
+            adapter.insert(new Person(1,names[nameRand],families[famRand],
+                    patronymics[patrRand],phones[phoneRand],null));
+        }
+        persons.clear();
+        persons.addAll(adapter.getPersons());
+        adapter.close();
+        personsAdapter.notifyDataSetChanged();
     }
 
 }
