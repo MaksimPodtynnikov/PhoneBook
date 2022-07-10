@@ -1,14 +1,6 @@
 package com.practic.phonebook;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -21,8 +13,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class EditActivity extends AppCompatActivity {
@@ -138,11 +135,7 @@ public class EditActivity extends AppCompatActivity {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Предупреждение!")
                     .setMessage("Вы не заполнили данные!")
-                    .setPositiveButton("ОК", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
+                    .setPositiveButton("ОК", (dialog, id) -> dialog.cancel());
             builder.create();
             builder.show();
         }
@@ -175,14 +168,12 @@ public class EditActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_CODE_PERMISSION_CALLS:
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    String toDial = "tel:+7" + phone.getText().toString();
-                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(toDial)));
-                }
-                return;
+        if (requestCode == REQUEST_CODE_PERMISSION_CALLS) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                String toDial = "tel:+7" + phone.getText().toString();
+                startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(toDial)));
+            }
         }
     }
 

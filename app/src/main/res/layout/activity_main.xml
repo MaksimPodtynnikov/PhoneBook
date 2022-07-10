@@ -6,23 +6,46 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <Button
+        android:id="@+id/importButton"
+        android:layout_width="175dp"
+        android:layout_height="43dp"
+        android:onClick="importList"
+        android:text="@string/ImportList"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UsingOnClickInXml" />
+
+    <Button
+        android:id="@+id/exportButton"
+        android:layout_width="175dp"
+        android:layout_height="43dp"
+        android:onClick="exportList"
+        android:text="@string/export"
+        app:layout_constraintBottom_toTopOf="@+id/editTextSearch"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="UsingOnClickInXml" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:contentDescription="addContacts"
+        android:contentDescription="@string/addContacts"
         android:onClick="fullContactsClick"
         app:layout_constraintBottom_toTopOf="@+id/navButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_add" />
+        app:srcCompat="@android:drawable/ic_menu_add"
+        android:focusable="true"
+        tools:ignore="UsingOnClickInXml" />
 
     <Button
         android:id="@+id/navButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onClick"
-        android:text="Добавить контакт"
+        android:text="@string/addContact"
 
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,12 +59,12 @@
         android:id="@+id/editTextSearch"
         android:layout_width="409dp"
         android:layout_height="50dp"
-        android:layout_marginTop="4dp"
         android:ems="10"
-        android:hint="Поиск"
+        android:hint="@string/search"
         android:inputType="textPersonName"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/importButton"
+        android:autofillHints="" />
 
     <ListView
         android:id="@+id/contacts"
